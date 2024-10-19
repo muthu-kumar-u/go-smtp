@@ -1,0 +1,41 @@
+name: Image Build Go SMTP 
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/*'
+    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: muthu-kumar-u
+          password: ${{ secrets.WORKFLOW_DOCKER_TOKEN }}
+
+      - name: Set outputs
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Enforce case in git
+        run: git config core.ignorecase false
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          no-cache: true
+          tags: ghcr.io/muthu-kumar-u/go-smtp:latest,  ghcr.io/muthu-kumar-u/go-smtp:${{ steps.vars.outputs.sha_short }}
