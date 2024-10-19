@@ -5,10 +5,7 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '.github/*'
     
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,7 +19,7 @@ jobs:
         with:
           registry: ghcr.io
           username: muthu-kumar-u
-          password: ${{ secrets.WORKFLOW_DOCKER_TOKEN }}
+          password: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Set outputs
         id: vars
