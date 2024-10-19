@@ -19,7 +19,7 @@ jobs:
         with:
           registry: ghcr.io
           username: muthu-kumar-u
-          password: ${{ secrets.WORKFLOW_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Set outputs
         id: vars
