@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -19,11 +21,11 @@ jobs:
 
     - name: Build Go server
       run: |
-        GOOS=linux GOARCH=amd64 go build -o main main.go
+        GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
     
     - name: Zip the files
       run: |
-        zip -r app.zip main bootstrap  
+        zip -r app.zip bootstrap   
 
     - name: Set outputs
       id: vars
@@ -33,7 +35,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       with:
         tag_name: ${{ steps.vars.outputs.sha_short }}
         release_name: "Release ${{ steps.vars.outputs.sha_short }}"
@@ -43,7 +45,7 @@ jobs:
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./app.zip
